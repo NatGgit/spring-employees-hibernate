@@ -1,9 +1,12 @@
-package spring.hibernate;
+package spring.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import spring.model.Cars;
+import spring.model.Employees;
+import spring.model.Printers;
 import spring.services.CarsServiceImpl;
 import spring.services.EmployeesServiceImpl;
 import spring.services.PrintersServiceImpl;
@@ -53,8 +56,7 @@ public class IndexController {
             entityManager.remove(employees);
         }
 
-        //przywracanie bazy działa, ale po usunięciu danych i restorze id się nie zerują, tylko zaczynają "powyżej"
-        // tych, które były poprzednio wykorzystane
+        // restoring database works, but ids wont reset, they start "over" the ones that was already used
 
         Employees employees1 = new Employees("Piotr", "Pawlak", "Grójecka 28", "Warszawa",
                 1000, 18, LocalDate.of(2015, 6, 12), 0, "dolek@wp.pl");

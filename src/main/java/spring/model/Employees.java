@@ -1,11 +1,13 @@
-package spring.hibernate;
+package spring.model;
 
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Employees")
@@ -14,22 +16,21 @@ import java.util.*;
 @AllArgsConstructor
 public class Employees implements HibernateEntity {
 
-    // usunięcie pracownika spowoduje usunięcie samochodu
+    // employee removing will result in car removing
     @OneToMany(mappedBy = "employees", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-//    @OneToMany(mappedBy = "employees", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @ToString.Exclude // żeby nie wywalało stackoverflow exception
-    @EqualsAndHashCode.Exclude // samochód nie decyduje o tym że to inna osoba
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Cars> cars;
 
     @ManyToMany(mappedBy = "employeesSet", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @ToString.Exclude // żeby nie wywalało stackoverflow exception
-    @EqualsAndHashCode.Exclude // samochód nie decyduje o tym że to inna osoba
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Printers> printersSet;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude // żeby móc sprawdzić czy nie jest dodawany taki sam pracownik tylko z nowym id
+    @EqualsAndHashCode.Exclude // in order to check if the same employee but with different id is being added
     @Column(name = "ID")
     private int id;
 
@@ -52,7 +53,7 @@ public class Employees implements HibernateEntity {
 
     @Column(name = "Salary")
     @NonNull
-    @EqualsAndHashCode.Exclude // żeby móc sprawdzić czy nie jest dodawany taki sam pracownik tylko z nową pensją
+    @EqualsAndHashCode.Exclude
     private int salary;
 
     @Column(name = "Age")
@@ -62,12 +63,12 @@ public class Employees implements HibernateEntity {
     @Column(name = "StartJobDate")
     @NonNull
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    @EqualsAndHashCode.Exclude // żeby móc sprawdzić czy nie jest dodawany taki sam pracownik tylko z nową datą
+    @EqualsAndHashCode.Exclude
     private LocalDate startJobDate;
 
     @Column(name = "Benefit")
     @NonNull
-    @EqualsAndHashCode.Exclude // żeby móc sprawdzić czy nie jest dodawany taki sam pracownik tylko z nowym benefitem
+    @EqualsAndHashCode.Exclude
     private int benefit;
 
     @Column(name = "Email")
@@ -98,17 +99,6 @@ public class Employees implements HibernateEntity {
         this.startJobDate = startJobDate;
         this.benefit = benefit;
         this.email = email;
-    }
-
-    // zgodnie z tym co znalazłam online trzeba dodać takie metody
-    public void addPrinter(Printers printer) {
-        printersSet.add(printer);
-        printer.getEmployeesSet().add(this);
-    }
-
-    public void removePrinter(Printers printer) {
-        printersSet.remove(printer);
-        printer.getEmployeesSet().remove(this);
     }
 
     public Set<Printers> getPrintersSet() {
